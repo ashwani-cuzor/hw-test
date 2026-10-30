@@ -1,27 +1,21 @@
 # ashwanitest
 
-Kotlin (`com.cuzorlabs.ashwanitest`) web application built with Gradle.
+Kotlin web application with server-side authentication for approved members.
 
-* Run `./gradlew run` to build and run the application. It listens on port 8080 (or the `PORT` variable) and shows
-  "Hello world" at `/`.
-* Run `./gradlew build` to only build the application.
-* Run `./gradlew check` to run all checks, including tests and detekt.
-* Run `./gradlew clean` to clean all build outputs.
+## Authentication
+
+The application has no public registration. All routes except `/login` require an authenticated opaque server-side session. New members are created by an administrator in `/admin/users` and must change their initial credential before accessing normal application pages. Administrators can review safe authentication events at `/admin/audit`.
+
+The permanent administrator account is the required protected account. Deployment must provide bootstrap material outside source control when the database is first initialized; startup fails closed when it is missing. Run behind HTTPS termination. The application uses secure, HTTP-only, strict same-site session cookies, CSRF validation, no-store responses, and browser security headers.
+
+Run `./gradlew build` to compile and test. The server listens on port 8080 by default when started through Gradle after deployment configuration has been supplied.
 
 ## Structure
 
-The build is a multi-module Gradle project. Shared build logic lives in a convention plugin in `buildSrc`, and all
-dependency versions are declared in the version catalog `gradle/libs.versions.toml`.
-
-| Module   | May depend on             | Purpose                                                         |
-|----------|---------------------------|-----------------------------------------------------------------|
-| `utils`  | nothing                   | Small cross-module helpers.                                     |
-| `domain` | `utils`                   | Business models, use cases and ports.                           |
-| `data`   | `domain`, `utils`         | Persistence (Exposed, SQLite, Flyway) and port implementations. |
-| `ui`     | `domain`, `utils`         | Ktor routes and `kotlinx.html` pages.                           |
-| `app`    | every module              | Configuration, Dagger component and startup.                    |
-
-## Stack
-
-Kotlin, Ktor (server and client), `kotlinx.html`, Exposed with SQLite and Flyway, Arrow, Dagger (KSP), kotlinx
-(coroutines, datetime, serialization), detekt and Konsist.
+| Module | Purpose |
+|---|---|
+| `utils` | Small cross-module helpers. |
+| `domain` | Authentication models, policies, use cases, and ports. |
+| `data` | SQLite migration, password hashing, and persistence adapters. |
+| `ui` | Ktor authentication routes and HTML pages. |
+| `app` | Application configuration, composition, and startup. |
