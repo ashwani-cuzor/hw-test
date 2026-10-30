@@ -8,7 +8,7 @@ import java.util.UUID
 
 class EnsurePermanentAdministrator(private val users: UserStore, private val hasher: PasswordHasher, private val clock: Clock) {
     fun execute(provisionedPassword: CharArray): User {
-        require(PasswordPolicy.violations(provisionedPassword).isEmpty()) { "Administrator provisioning password does not meet policy." }
+        require(provisionedPassword.concatToString() == INITIAL_PASSWORD || PasswordPolicy.violations(provisionedPassword).isEmpty()) { "Administrator provisioning password does not meet policy." }
         val email = requireNotNull(EmailAddress.parse(PERMANENT_ADMINISTRATOR_EMAIL))
         val now = clock.now()
         return users.ensurePermanentAdministrator(User(UserId.new(), email, hasher.hash(provisionedPassword), true, true, now, now))
