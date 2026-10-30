@@ -1,0 +1,29 @@
+# Project detekt configuration. It is applied on top of detekt's default configuration (`buildUponDefaultConfig`
+# in the convention plugin), so only differences from the defaults are listed. Every finding fails `check`.
+
+naming:
+  # Each module's aggregate Dagger module lives in `Dagger.kt`.
+  MatchingDeclarationName:
+    excludes: ['**/Dagger.kt']
+
+potential-bugs:
+  # `!!` is never allowed, in production or test code.
+  UnsafeCallOnNullableType:
+    active: true
+    excludes: []
+
+style:
+  # Escaping the Either flow is never allowed. Arrow has no getOrThrow; Kotlin's Result does.
+  ForbiddenMethodCall:
+    active: true
+    methods:
+      - reason: 'Compose with either { } and bind() instead of escaping the Either flow.'
+        value: 'kotlin.getOrThrow'
+
+ktlint:
+  # Each module's aggregate Dagger module lives in `Dagger.kt`.
+  Filename:
+    excludes: ['**/Dagger.kt']
+  # The project uses block bodies with `return` for functions, including single expressions.
+  FunctionExpressionBody:
+    active: false
